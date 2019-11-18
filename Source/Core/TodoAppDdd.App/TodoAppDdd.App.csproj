@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\TodoAppDdd.Persistence\TodoAppDdd.Persistence.csproj" />
+    <ProjectReference Include="..\TodoAppDdd.App.Contracts\TodoAppDdd.App.Contracts.csproj" />
+    <ProjectReference Include="..\TodoAppDdd.Domain\TodoAppDdd.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

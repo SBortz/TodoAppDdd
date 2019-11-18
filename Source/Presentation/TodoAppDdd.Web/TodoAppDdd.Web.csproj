@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>d3080358-3e48-4107-b3b4-73957b1f7643</UserSecretsId>
+    <Configurations>OnAzure;DevInMem;DevTextStore</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='OnAzure|AnyCPU'">
+    <DefineConstants>TRACE;ONAZURE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevInMem|AnyCPU'">
+    <DefineConstants>TRACE;DEVINMEM</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevTextStore|AnyCPU'">
+    <DefineConstants>TRACE;DEVTEXTSTORE</DefineConstants>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TodoAppDdd.Common\TodoAppDdd.Common.csproj" />
+    <ProjectReference Include="..\..\Core\TodoAppDdd.App.Contracts\TodoAppDdd.App.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\TodoAppDdd.Bootstrapper\TodoAppDdd.Bootstrapper.csproj" />
+  </ItemGroup>
+
+</Project>

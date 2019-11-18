@@ -1,0 +1,290 @@
+﻿@using TodoAppDdd.App.Contracts.Query
+@model IEnumerable<TodoItemDto>
+@{
+
+  ViewData["Title"] = "Home Page";
+
+}
+
+<style>
+
+  .marked-li {
+    background-color: khaki;
+  }
+
+  .no-border {
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
+  }
+</style>
+
+<div class="text-center">
+
+  <br />
+  <br />
+  <div class="row d-flex justify-content-center">
+    <div class="card" style="width: 50rem;">
+      <ul class="list-group list-group-flush">
+        <div class="card-header">
+          <h3 class="card-title">TodoAppDDD</h3>
+        </div>
+        @foreach (var todoItemDto in Model)
+        {
+          if (todoItemDto.Completed.Value)
+          {
+            <li class="list-group-item bg-info text-white">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <a onclick="resetTodoItem('@todoItemDto.Id');" class="btn btn-dark btn-lg float-left"> &check;</a>
+                  </div>
+                  <div class="col-10 text-left">
+                    <h5 id="todoinputtitle"><s>@todoItemDto.Title</s></h5>
+                    <p class="card-text"><small class="text-white">Last updated @todoItemDto.LastUpdate - Created/Restored on @todoItemDto.CreatedOn</small></p>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="close text-white" aria-label="Close" onclick="discardTodoItem('@todoItemDto.Id');">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          }
+          else
+          {
+            <li class="list-group-item">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <a onclick="finishTodoItem('@todoItemDto.Id');" class="btn btn-light btn-lg float-left"> &check;</a>
+                  </div>
+                  <div class="col-10 text-left">
+                    <h5>@todoItemDto.Title</h5>
+                    <p class="card-text"><small class="text-muted">Last updated @todoItemDto.LastUpdate - Created/Restored on @todoItemDto.CreatedOn</small></p>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="close" aria-label="Close" onclick="discardTodoItem('@todoItemDto.Id');">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          }
+        }
+
+        <form onsubmit="createTodoItem();">
+          <div class="input-group input-group-lg border-top">
+            <input type="text" class="form-control no-border" aria-label="Large" aria-describedby="inputGroup-sizing-sm" id="create-todo-item-text" placeholder="Describe your todo" autofocus>
+            <div class="input-group-append">
+              <a class="btn btn-primary text-white" onclick="createTodoItem();">Add</a>
+            </div>
+          </div>
+        </form>
+        <div class="card-footer text-muted">
+          @Model.Where(x => x.Completed.Value == false).Count() uncompleted Todo Items
+          <button type="button" class="btn btn-dark float-left" onclick="completeAll();"> &cross; Clear all </button>
+        </div>
+      </ul>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="accordion" id="accordionExample" style="width: 50rem; margin-top: 10rem;">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Special Eventsourcing Feature #1
+            </button>
+          </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            <h5 class="card-title">Special Eventsourcing Feature:</h5>
+            <p class="card-text">Restore the last 5 discarded elements.</p>
+            <a href="#" class="btn btn-primary" onclick="restoreLastDiscardedElements();">Try it out!</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Special Eventsourcing Feature #2
+            </button>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            <form>
+              <h5 class="card-title" style="margin-top: 1rem;">Special Eventsourcing Feature:</h5>
+              <div class="card-body">
+                <label for="rangeInput">Go back in time</label>
+                <input id="amount" type="text" value="0" name="amount" for="rangeInput" oninput="rangeInput.value=amount.value" class="no-border" style="width: 20px;" />
+                minutes
+                <input type="range" class="custom-range" min="0" max="100" step="1" value="0" name="rangeInput" id="rangeInput" oninput="amount.value=rangeInput.value">
+                <a onclick="goBackInTime(document.getElementById('rangeInput').value);" class="btn btn-primary text-white">Try it out!</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    
+
+
+  </div>
+
+
+@section Scripts {
+  <script type="text/javascript">
+
+    function createTodoItem() {
+      var data = {};
+      data.title = $('#create-todo-item-text').val();
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "Create", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function discardTodoItem(todoId) {
+      var data = {};
+      data.id = todoId;
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "Discard", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function resetTodoItem(todoId) {
+      var data = {};
+      data.id = todoId;
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "Reset", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function finishTodoItem(todoId) {
+      var data = {};
+      data.id = todoId;
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "Finish", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function restoreLastDiscardedElements() {
+      var data = {};
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "Restore", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function completeAll() {
+      var data = {};
+
+      $.ajax({
+          url: '@Url.RouteUrl(new { action = "DiscardAll", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function (xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+    }
+
+    function goBackInTime(minutes) {
+      window.location.href = "/?goBack=" + minutes;
+    }
+
+    $(document).ready(function () {
+      var urlParams = new URLSearchParams(window.location.search);
+      var goBackParam = urlParams.get('goBack');
+
+      var param = 0;
+      if (goBackParam != null && goBackParam != 0) {
+        param = goBackParam;
+        $('#collapseTwo').addClass('show');
+      }
+      $('#rangeInput').val(param);
+      $('#amount').val(param);
+    });
+
+
+  </script>
+}
