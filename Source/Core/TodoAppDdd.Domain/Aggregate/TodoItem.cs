@@ -11,7 +11,6 @@ namespace TodoAppDdd.Domain.Aggregate
 {
 	public class TodoItem : AggregateRoot
 	{
-		public string Id { get; private set; }
 		public string Title { get; private set; }
 		public bool IsDiscarded { get; private set; }
 		public bool IsFinished { get; private set; }
@@ -47,7 +46,6 @@ namespace TodoAppDdd.Domain.Aggregate
 
 		private void When(TodoItemCreated e)
 		{
-			this.Id = e.Id;
 			this.Title = e.Title;
 			this.Order = e.Order;
 			this.CreatedOn = e.CreatedOn;

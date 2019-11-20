@@ -7,6 +7,8 @@ namespace TodoAppDdd.Domain.DDDBase
 {
 	public abstract class AggregateRoot : IAggregateRoot
 	{
+		public string Id { get; private set; }
+		
 		private ICollection<IDomainEvent> _events;
 
 		public IEnumerable<IDomainEvent> DomainEvents => new List<IDomainEvent>(this._events);
@@ -19,7 +21,7 @@ namespace TodoAppDdd.Domain.DDDBase
 		{
 			foreach (var e in eventStream)
 			{
-				this.When(e);
+				this.WhenInternal(e);
 			}
 		}
 
@@ -34,7 +36,22 @@ namespace TodoAppDdd.Domain.DDDBase
 			domainEvent.EventType = domainEvent.GetType().Name;
 
 			this._events.Add(domainEvent);
-			this.When(domainEvent);
+			this.WhenInternal(domainEvent);
+		}
+
+		private void WhenInternal(IDomainEvent e)
+		{
+			if (this.Id == null)
+			{
+				this.Id = e.Id;
+			}
+
+			if (this.Id != e.Id)
+			{
+				throw new WrongIdOnAggregateException();
+			}
+
+			this.When(e);
 		}
 
 		protected abstract void When(IDomainEvent e);
