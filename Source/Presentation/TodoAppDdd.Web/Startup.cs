@@ -39,14 +39,21 @@ namespace TodoAppDdd.Web
 			
 			if (this.env.IsDevelopment())
 			{
+				// Demonstrate events in text file
+//				services.AddTextEventStore();
+//				services.AddQueryHandler();
+
+				// Reset all data sources in order to be in sync after every start
 				services.AddInMemoryEventStore();
-				services.AddReadModelQueryHandler();
-				services.AddTodoAppDddContext();
+				services.AddReadModelQueryHandlerWithInMemoryDbContext();
 			}
 			else
 			{
+				// Choose between AddInMemoryEventStore || AddTextEventStore
 				services.AddInMemoryEventStore();
-				services.AddQueryHandler();
+
+				// Choose between AddQueryHandler || AddReadModelQueryHandlerWithInMemoryDbContext()
+				services.AddReadModelQueryHandlerWithInMemoryDbContext();
 			}
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

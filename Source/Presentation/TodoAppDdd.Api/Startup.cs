@@ -20,12 +20,12 @@ namespace TodoAppDdd.Api
 {
 	public class Startup
 	{
-		private readonly IHostingEnvironment env;
+		private readonly IHostingEnvironment _env;
 
 		public Startup(IConfiguration configuration, IHostingEnvironment env)
 		{
 			Configuration = configuration;
-			this.env = env;
+			this._env = env;
 		}
 
 		public IConfiguration Configuration { get; }
@@ -36,18 +36,23 @@ namespace TodoAppDdd.Api
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 			services.AddApplication();
-
-			if (this.env.IsDevelopment())
+			if (this._env.IsDevelopment())
 			{
-				services.AddInMemoryEventStore();
+				// Demonstrate events in text file
+//				services.AddTextEventStore();
+//				services.AddQueryHandler();
 
-				services.AddTodoAppDddContext();
-				services.AddReadModelQueryHandler();
+				// Reset all data sources in order to be in sync after every start
+				services.AddInMemoryEventStore();
+				services.AddReadModelQueryHandlerWithInMemoryDbContext();
 			}
 			else
 			{
+				// Choose between AddInMemoryEventStore || AddTextEventStore
 				services.AddInMemoryEventStore();
-				services.AddQueryHandler();
+
+				// Choose between AddQueryHandler || AddReadModelQueryHandlerWithInMemoryDbContext()
+				services.AddReadModelQueryHandlerWithInMemoryDbContext();
 			}
 
 			services.Configure<MvcOptions>(options =>

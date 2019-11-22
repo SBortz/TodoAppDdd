@@ -40,8 +40,13 @@ namespace TodoAppDdd.Bootstrapper
 
 		}
 
-		public static void AddReadModelQueryHandler(this IServiceCollection serviceCollection)
+		public static void AddReadModelQueryHandlerWithInMemoryDbContext(this IServiceCollection serviceCollection)
 		{
+			serviceCollection.AddDbContext<TodoAppDddContext>(options =>
+			{
+				options.UseInMemoryDatabase("TodoAppDdd");
+			});
+
 			// ReadModel: SQL Table as data source for querying data
 			serviceCollection.AddTransient<IGetTodoItemsQueryHandler, GetTodoItemsReadModelQueryHandler>();
 			serviceCollection.AddTransient<IGetTodoItemQueryHandler, GetTodoItemReadModelQueryHandler>();
@@ -56,14 +61,6 @@ namespace TodoAppDdd.Bootstrapper
 		public static void AddInMemoryEventStore(this IServiceCollection serviceCollection)
 		{
 			serviceCollection.AddSingleton<IEventStore, InMemoryEventStore>();
-		}
-
-		public static void AddTodoAppDddContext(this IServiceCollection services)
-		{
-			services.AddDbContext<TodoAppDddContext>(options =>
-			{
-				options.UseInMemoryDatabase("TodoAppDdd");
-			});
 		}
 	}
 }
