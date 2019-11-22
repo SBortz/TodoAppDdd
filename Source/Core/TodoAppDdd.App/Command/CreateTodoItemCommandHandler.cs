@@ -5,6 +5,7 @@ using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Command;
 using TodoAppDdd.App.Contracts.Query;
 using TodoAppDdd.Domain.Aggregate;
+using TodoAppDdd.Domain.DDDBase;
 using TodoAppDdd.Persistence;
 
 namespace TodoAppDdd.App.Command
@@ -12,12 +13,14 @@ namespace TodoAppDdd.App.Command
 	public class CreateTodoItemCommandHandler : ICreateTodoItemCommandHandler
 	{
 		private readonly ITodoRepository _todoRepository;
-		private readonly ITodoItemMapper mapper;
+		private readonly ITodoItemMapper _mapper;
+		private readonly ITodoItemReadModelRepository _todoItemReadModelRepository;
 
-		public CreateTodoItemCommandHandler(ITodoRepository todoRepository, ITodoItemMapper mapper)
+		public CreateTodoItemCommandHandler(ITodoRepository todoRepository, ITodoItemMapper mapper, ITodoItemReadModelRepository todoItemReadModelRepository)
 		{
 			this._todoRepository = todoRepository;
-			this.mapper = mapper;
+			this._mapper = mapper;
+			this._todoItemReadModelRepository = todoItemReadModelRepository;
 		}
 
 		public TodoItemDto Handle(CreateTodoItemCommand itemCommand)
@@ -26,7 +29,8 @@ namespace TodoAppDdd.App.Command
 
 			this._todoRepository.SaveState(todoItem);
 
-			return this.mapper.Map(todoItem);
+			this._todoItemReadModelRepository.InsertOrUpdateFromTodoItem(todoItem);
+			return this._mapper.Map(todoItem);
 		}
 	}
 }

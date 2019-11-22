@@ -36,6 +36,9 @@ namespace TodoAppDdd.Web
 			});
 
 			services.AddApplication();
+			var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+			services.AddTodoAppDddContext(connectionString);
+
 			if (this.env.IsDevInMem())
 			{
 				services.AddInMemoryEventStore();

@@ -36,6 +36,9 @@ namespace TodoAppDdd.Api
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 			services.AddApplication();
+
+			var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+			services.AddTodoAppDddContext(connectionString);
 			if (this.env.IsDevInMem())
 			{
 				services.AddInMemoryEventStore();
@@ -64,6 +67,7 @@ namespace TodoAppDdd.Api
 			{
 				options.SwaggerDoc("v1", new Info { Title = "TodoAppDdd API", Version = "v1" });
 			});
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

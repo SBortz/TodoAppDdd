@@ -1,40 +1,45 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <UserSecretsId>8d64cfaf-c501-4e44-b014-513b43a0f616</UserSecretsId>
-    <Configurations>OnAzure;DevInMem;DevTextStore</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<UserSecretsId>8d64cfaf-c501-4e44-b014-513b43a0f616</UserSecretsId>
+		<Configurations>OnAzure;DevInMem;DevTextStore</Configurations>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevTextStore|AnyCPU'">
-    <DefineConstants>TRACE;DEVTEXTSTORE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevTextStore|AnyCPU'">
+		<DefineConstants>TRACE;DEVTEXTSTORE</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevInMem|AnyCPU'">
-    <DefineConstants>TRACE;DEVINMEM</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevInMem|AnyCPU'">
+		<DefineConstants>TRACE;DEVINMEM</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='OnAzure|AnyCPU'">
-    <DefineConstants>TRACE;ONAZURE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='OnAzure|AnyCPU'">
+		<DefineConstants>TRACE;ONAZURE</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Controllers\StaticTodoController.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Controllers\StaticTodoController.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\TodoAppDdd.App.Contracts\TodoAppDdd.App.Contracts.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\TodoAppDdd.Bootstrapper\TodoAppDdd.Bootstrapper.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\TodoAppDdd.App.Contracts\TodoAppDdd.App.Contracts.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\TodoAppDdd.Bootstrapper\TodoAppDdd.Bootstrapper.csproj" />
+	</ItemGroup>
 
 </Project>

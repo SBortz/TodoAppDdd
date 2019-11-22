@@ -13,7 +13,7 @@ namespace TodoAppDdd.App.Query
 		private readonly ITodoRepository _todoRepository;
 		private readonly ITodoItemMapper _mapper;
 
-		public GetTodoItemQueryHandler(ITodoRepository todoRepository, ITodoItemMapper mapper)
+		public GetTodoItemQueryHandler(ITodoItemMapper mapper, ITodoRepository todoRepository)
 		{
 			this._todoRepository = todoRepository;
 			this._mapper = mapper;
