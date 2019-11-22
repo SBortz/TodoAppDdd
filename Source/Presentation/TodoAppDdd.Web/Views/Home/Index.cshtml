@@ -74,11 +74,11 @@
           }
         }
 
-        <form onsubmit="createTodoItem();">
+        <form id="createTodoItemForm">
           <div class="input-group input-group-lg border-top">
             <input type="text" class="form-control no-border" aria-label="Large" aria-describedby="inputGroup-sizing-sm" id="create-todo-item-text" placeholder="Describe your todo" autofocus>
             <div class="input-group-append">
-              <a class="btn btn-primary text-white" onclick="createTodoItem();">Add</a>
+              <a class="btn btn-primary text-white" onclick="submit();">Add</a>
             </div>
           </div>
         </form>
@@ -144,26 +144,27 @@
 @section Scripts {
   <script type="text/javascript">
 
-    function createTodoItem() {
-      var data = {};
-      data.title = $('#create-todo-item-text').val();
-
-      $.ajax({
-          url: '@Url.RouteUrl(new { action = "Create", controller = "Todo" })',
-          data: JSON.stringify(data),
-          type: 'POST',
-          dataType: 'json',
-          contentType: "application/json",
-          error: function (xhr, ajaxOptions, thrownError) {
-            if (xhr.status != "200") {
-              alert("Das hat nicht geklappt: " + xhr.status);
-            }
-          }
-        })
-        .always(function(id) {
-          window.location.reload();
-        });
-    }
+//    function createTodoItem(e) {
+//      e.preventDefault();
+//      var data = {};
+//      data.title = $('#create-todo-item-text').val();
+//
+//      $.ajax({
+//        url: '@Url.RouteUrl(new { action = "Create", controller = "Todo" })',
+//        data: JSON.stringify(data),
+//        type: 'POST',
+//        dataType: 'json',
+//        contentType: "application/json",
+//        error: function(xhr, ajaxOptions, thrownError) {
+//          if (xhr.status != "200") {
+//            alert("Das hat nicht geklappt: " + xhr.status);
+//          }
+//        }
+//      });
+////        .always(function (id) {
+////          setTimeout(window.location.reload, 2000);
+////        });
+//    }
 
     function discardTodoItem(todoId) {
       var data = {};
@@ -283,6 +284,29 @@
       }
       $('#rangeInput').val(param);
       $('#amount').val(param);
+
+
+      $("#createTodoItemForm").submit(function(e) {
+        e.preventDefault();
+        var data = {};
+        data.title = $('#create-todo-item-text').val();
+
+        $.ajax({
+          url: '@Url.RouteUrl(new { action = "Create", controller = "Todo" })',
+          data: JSON.stringify(data),
+          type: 'POST',
+          dataType: 'json',
+          contentType: "application/json",
+          error: function(xhr, ajaxOptions, thrownError) {
+            if (xhr.status != "200") {
+              alert("Das hat nicht geklappt: " + xhr.status);
+            }
+          }
+        })
+        .always(function(id) {
+          window.location.reload();
+        });
+      });
     });
 
 

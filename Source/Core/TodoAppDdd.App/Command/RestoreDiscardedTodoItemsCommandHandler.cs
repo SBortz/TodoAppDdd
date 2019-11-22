@@ -9,20 +9,23 @@ namespace TodoAppDdd.App.Command
 {
 	public class RestoreDiscardedTodoItemsCommandHandler : IRestoreDiscardedTodoItemsCommandHandler
 	{
-		private readonly ITodoRepository todoRepository;
+		private readonly ITodoRepository _todoRepository;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public RestoreDiscardedTodoItemsCommandHandler(ITodoRepository todoRepository)
+		public RestoreDiscardedTodoItemsCommandHandler(ITodoRepository todoRepository, ITodoItemReadModelRepository readModelRepository)
 		{
-			this.todoRepository = todoRepository;
+			this._todoRepository = todoRepository;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public void Handle(RestoreDiscardedTodoItemsCommand command)
 		{
-			var last5DiscardedTodos = this.todoRepository.GetLast5DiscardedTodos();
+			var last5DiscardedTodos = this._todoRepository.GetLast5DiscardedTodos();
 			foreach (var todoItem in last5DiscardedTodos)
 			{
 				todoItem.Restore();
-				this.todoRepository.SaveState(todoItem);
+				this._todoRepository.SaveState(todoItem);
+				this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 			}
 		}
 	}

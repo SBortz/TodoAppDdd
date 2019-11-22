@@ -36,20 +36,17 @@ namespace TodoAppDdd.Web
 			});
 
 			services.AddApplication();
-			var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
-			services.AddTodoAppDddContext(connectionString);
-
-			if (this.env.IsDevInMem())
+			
+			if (this.env.IsDevelopment())
 			{
 				services.AddInMemoryEventStore();
-			}
-			else if (this.env.IsDevTextStore())
-			{
-				services.AddTextEventStore();
+				services.AddReadModelQueryHandler();
+				services.AddTodoAppDddContext();
 			}
 			else
 			{
 				services.AddInMemoryEventStore();
+				services.AddQueryHandler();
 			}
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

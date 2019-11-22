@@ -8,18 +8,11 @@
     }
   },
 	"profiles": {
-		"DevInMem": {
+		"Development": {
 			"commandName": "IISExpress",
 			"launchBrowser": true,
 			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "DevInMem"
-			}
-		},
-		"DevTextStore": {
-			"commandName": "IISExpress",
-			"launchBrowser": true,
-			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "DevTextStore"
+				"ASPNETCORE_ENVIRONMENT": "Development"
 			}
 		},
 		"OnAzure": {

@@ -24,10 +24,8 @@ namespace TodoAppDdd.Web
 
 		private static HostingEnv GetEnv()
 		{
-#if DEVINMEM
-			return HostingEnv.DevInMem;
-#elif DEVTEXTSTORE
-			return HostingEnv.DevTextStore;
+#if DEVELOPMENT
+			return HostingEnv.Development;
 #else
 			return HostingEnv.OnAzure;
 #endif
@@ -35,8 +33,7 @@ namespace TodoAppDdd.Web
 
 		public enum HostingEnv
 		{
-			DevInMem,
-			DevTextStore,
+			Development,
 			OnAzure
 		}
 	}

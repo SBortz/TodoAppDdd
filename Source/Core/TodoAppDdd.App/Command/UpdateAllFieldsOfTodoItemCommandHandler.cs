@@ -16,11 +16,13 @@ namespace TodoAppDdd.App.Command
 	{
 		private readonly ITodoRepository _repository;
 		private readonly ITodoItemMapper _mapper;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public UpdateAllFieldsOfTodoItemCommandHandler(ITodoRepository repository, ITodoItemMapper mapper)
+		public UpdateAllFieldsOfTodoItemCommandHandler(ITodoRepository repository, ITodoItemMapper mapper, ITodoItemReadModelRepository readModelRepository)
 		{
 			this._repository = repository;
 			this._mapper = mapper;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public TodoItemDto Handle(UpdateAllFieldsOfTodoItemCommand command)
@@ -67,6 +69,7 @@ namespace TodoAppDdd.App.Command
 			}
 
 			this._repository.SaveState(todoItem);
+			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 
 			return this._mapper.Map(todoItem);
 		}

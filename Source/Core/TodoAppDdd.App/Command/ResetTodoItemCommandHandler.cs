@@ -6,11 +6,13 @@ namespace TodoAppDdd.App.Command
 {
 	public class ResetTodoItemCommandHandler : IResetTodoItemCommandHandler
 	{
-		private ITodoRepository _todoRepository;
+		private readonly ITodoRepository _todoRepository;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public ResetTodoItemCommandHandler(ITodoRepository todoRepository)
+		public ResetTodoItemCommandHandler(ITodoRepository todoRepository, ITodoItemReadModelRepository readModelRepository)
 		{
 			this._todoRepository = todoRepository;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public void Handle(ResetTodoItemCommand cmd)
@@ -20,6 +22,7 @@ namespace TodoAppDdd.App.Command
 			todoItem.Reset();
 
 			this._todoRepository.SaveState(todoItem);
+			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 		}
 	}
 }

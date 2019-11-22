@@ -10,10 +10,12 @@ namespace TodoAppDdd.App.Command
 	public class FinishTodoItemCommandHandler : IFinishTodoItemCommandHandler
 	{
 		private readonly ITodoRepository _todoRepository;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public FinishTodoItemCommandHandler(ITodoRepository todoRepository)
+		public FinishTodoItemCommandHandler(ITodoRepository todoRepository, ITodoItemReadModelRepository readModelRepository)
 		{
 			this._todoRepository = todoRepository;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public void Handle(FinishTodoItemCommand cmd)
@@ -23,6 +25,7 @@ namespace TodoAppDdd.App.Command
 			todoItem.Finish();
 
 			this._todoRepository.SaveState(todoItem);
+			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 		}
 	}
 }

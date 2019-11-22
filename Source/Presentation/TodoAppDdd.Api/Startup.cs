@@ -37,19 +37,17 @@ namespace TodoAppDdd.Api
 
 			services.AddApplication();
 
-			var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
-			services.AddTodoAppDddContext(connectionString);
-			if (this.env.IsDevInMem())
+			if (this.env.IsDevelopment())
 			{
 				services.AddInMemoryEventStore();
-			}
-			else if(this.env.IsDevTextStore())
-			{
-				services.AddTextEventStore();
+
+				services.AddTodoAppDddContext();
+				services.AddReadModelQueryHandler();
 			}
 			else
 			{
 				services.AddInMemoryEventStore();
+				services.AddQueryHandler();
 			}
 
 			services.Configure<MvcOptions>(options =>

@@ -29,15 +29,23 @@ namespace TodoAppDdd.Bootstrapper
 			serviceCollection.AddTransient<IRestoreDiscardedTodoItemsCommandHandler, RestoreDiscardedTodoItemsCommandHandler>();
 			serviceCollection.AddTransient<ITodoRepository, TodoRepository>();
 			serviceCollection.AddTransient<ITodoItemMapper, TodoItemMapper>();
-			serviceCollection.AddTransient<ITodoItemReadModelRepository, TodoItemReadModelRepository>();
+		}
 
+		public static void AddQueryHandler(this IServiceCollection serviceCollection)
+		{
+			// EventSourcing as Query datasource for querying data
+			serviceCollection.AddTransient<IGetTodoItemsQueryHandler, GetTodoItemsQueryHandler>();
+			serviceCollection.AddTransient<IGetTodoItemQueryHandler, GetTodoItemQueryHandler>();
+			serviceCollection.AddTransient<ITodoItemReadModelRepository, FakeTodoItemReadModelRepository>();
 
-			// EventSourcing
-//			serviceCollection.AddTransient<IGetTodoItemsQueryHandler, GetTodoItemsQueryHandler>();
-//			serviceCollection.AddTransient<IGetTodoItemQueryHandler, GetTodoItemQueryHandler>();
-			// ReadModel
+		}
+
+		public static void AddReadModelQueryHandler(this IServiceCollection serviceCollection)
+		{
+			// ReadModel: SQL Table as data source for querying data
 			serviceCollection.AddTransient<IGetTodoItemsQueryHandler, GetTodoItemsReadModelQueryHandler>();
 			serviceCollection.AddTransient<IGetTodoItemQueryHandler, GetTodoItemReadModelQueryHandler>();
+			serviceCollection.AddTransient<ITodoItemReadModelRepository, TodoItemReadModelRepository>();
 		}
 
 		public static void AddTextEventStore(this IServiceCollection serviceCollection)
@@ -50,9 +58,12 @@ namespace TodoAppDdd.Bootstrapper
 			serviceCollection.AddSingleton<IEventStore, InMemoryEventStore>();
 		}
 
-		public static void AddTodoAppDddContext(this IServiceCollection services, string connectionString)
+		public static void AddTodoAppDddContext(this IServiceCollection services)
 		{
-			services.AddDbContext<TodoAppDddContext>(options => { options.UseSqlServer(connectionString); });
+			services.AddDbContext<TodoAppDddContext>(options =>
+			{
+				options.UseInMemoryDatabase("TodoAppDdd");
+			});
 		}
 	}
 }

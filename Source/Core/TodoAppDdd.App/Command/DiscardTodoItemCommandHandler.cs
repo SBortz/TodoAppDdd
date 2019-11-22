@@ -9,20 +9,23 @@ namespace TodoAppDdd.App.Command
 {
 	public class DiscardTodoItemCommandHandler : IDiscardTodoItemCommandHandler
 	{
-		private ITodoRepository todoRepository;
+		private readonly ITodoRepository _todoRepository;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public DiscardTodoItemCommandHandler(ITodoRepository todoRepository)
+		public DiscardTodoItemCommandHandler(ITodoRepository todoRepository, ITodoItemReadModelRepository readModelRepository)
 		{
-			this.todoRepository = todoRepository;
+			this._todoRepository = todoRepository;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public void Handle(DiscardTodoItemCommand cmd)
 		{
-			var todoItem = this.todoRepository.GetTodo(cmd.Id);
+			var todoItem = this._todoRepository.GetTodo(cmd.Id);
 
 			todoItem.Discard();
 
-			this.todoRepository.SaveState(todoItem);
+			this._todoRepository.SaveState(todoItem);
+			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 		}
 	}
 }

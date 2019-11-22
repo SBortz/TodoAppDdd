@@ -31,6 +31,7 @@ namespace TodoAppDdd.Persistence
 			currentTodoItemReadModel.Order = todoItem.Order;
 			currentTodoItemReadModel.CreatedOn = todoItem.CreatedOn;
 			currentTodoItemReadModel.LastUpdate = todoItem.LastUpdate;
+			currentTodoItemReadModel.IsDiscarded = todoItem.IsDiscarded;
 
 			this._context.SaveChanges();
 		}

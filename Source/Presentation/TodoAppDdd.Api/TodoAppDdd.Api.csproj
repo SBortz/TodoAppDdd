@@ -5,15 +5,11 @@
 		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<UserSecretsId>8d64cfaf-c501-4e44-b014-513b43a0f616</UserSecretsId>
-		<Configurations>OnAzure;DevInMem;DevTextStore</Configurations>
+		<Configurations>OnAzure;Development</Configurations>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevTextStore|AnyCPU'">
-		<DefineConstants>TRACE;DEVTEXTSTORE</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DevInMem|AnyCPU'">
-		<DefineConstants>TRACE;DEVINMEM</DefineConstants>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|AnyCPU'">
+		<DefineConstants>TRACE;DEVELOPMENT</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='OnAzure|AnyCPU'">

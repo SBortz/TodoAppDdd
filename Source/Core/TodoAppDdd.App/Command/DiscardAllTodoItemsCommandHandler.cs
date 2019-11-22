@@ -13,22 +13,25 @@ namespace TodoAppDdd.App.Command
 	public class DiscardAllTodoItemsCommandHandler : IDiscardAllTodoItemsCommandHandler
 	{
 		private readonly ITodoRepository _todoRepository;
+		private readonly ITodoItemReadModelRepository _readModelRepository;
 
-		public DiscardAllTodoItemsCommandHandler(ITodoRepository todoRepository)
+		public DiscardAllTodoItemsCommandHandler(ITodoRepository todoRepository, ITodoItemReadModelRepository readModelRepository)
 		{
 			this._todoRepository = todoRepository;
+			this._readModelRepository = readModelRepository;
 		}
 
 		public void Handle(DiscardAllTodoItemsCommand command)
 		{
 			var allTodos = this._todoRepository.GetAllTodos();
-
+			
 			foreach (var todoItem in allTodos)
 			{
 				try
 				{
 					todoItem.Discard();
 					this._todoRepository.SaveState(todoItem);
+					this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 				}
 				catch(TodoItemAlreadyDiscardedException ex)
 				{
