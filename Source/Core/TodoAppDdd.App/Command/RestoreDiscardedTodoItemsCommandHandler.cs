@@ -20,7 +20,7 @@ namespace TodoAppDdd.App.Command
 
 		public void Handle(RestoreDiscardedTodoItemsCommand command)
 		{
-			var last5DiscardedTodos = this._todoRepository.GetLast5DiscardedTodos();
+			var last5DiscardedTodos = this._todoRepository.GetLastDiscardedTodos();
 			foreach (var todoItem in last5DiscardedTodos)
 			{
 				todoItem.Restore();

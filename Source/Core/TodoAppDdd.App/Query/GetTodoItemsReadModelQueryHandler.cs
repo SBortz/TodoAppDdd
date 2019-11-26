@@ -23,7 +23,7 @@ namespace TodoAppDdd.App.Query
 
 		public IEnumerable<TodoItemDto> Handle(GetTodoItemsQuery query)
 		{
-			if (query.GoBackMinutes.HasValue && query.GoBackMinutes.Value > 0)
+			if (query.GoBackSeconds.HasValue && query.GoBackSeconds.Value > 0)
 			{
 				return this.Fallback(query);
 			}
@@ -48,7 +48,7 @@ namespace TodoAppDdd.App.Query
 
 		private IEnumerable<TodoItemDto> Fallback(GetTodoItemsQuery query)
 		{
-			var todoItems = this._todoRepository.GetAllTodos(query.GoBackMinutes);
+			var todoItems = this._todoRepository.GetAllTodos(query.GoBackSeconds);
 
 			var todoItemsDtoList = new List<TodoItemDto>();
 			foreach (var todoItem in todoItems)

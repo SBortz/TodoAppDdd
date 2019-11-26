@@ -21,7 +21,7 @@ namespace TodoAppDdd.App.Query
 
 		public IEnumerable<TodoItemDto> Handle(GetTodoItemsQuery query)
 		{
-			var todoItems = this._todoRepository.GetAllTodos(query.GoBackMinutes);
+			var todoItems = this._todoRepository.GetAllTodos(query.GoBackSeconds);
 
 			var todoItemsDtoList = new List<TodoItemDto>();
 			foreach (var todoItem in todoItems)

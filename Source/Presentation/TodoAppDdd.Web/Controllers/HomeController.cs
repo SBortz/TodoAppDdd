@@ -22,7 +22,7 @@ namespace TodoAppDdd.Web.Controllers
 		public IActionResult Index([FromQuery] int? goBack)
 		{
 
-			IEnumerable<TodoItemDto> todoItems = this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery() { GoBackMinutes = goBack});
+			IEnumerable<TodoItemDto> todoItems = this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery() { GoBackSeconds = goBack});
 			return View(todoItems);
 		}
 

@@ -78,7 +78,7 @@
           <div class="input-group input-group-lg border-top">
             <input type="text" class="form-control no-border" aria-label="Large" aria-describedby="inputGroup-sizing-sm" id="create-todo-item-text" placeholder="Describe your todo" autofocus>
             <div class="input-group-append">
-              <a class="btn btn-primary text-white" onclick="submit();">Add</a>
+              <a id="createTodoButton" class="btn btn-primary text-white">Add</a>
             </div>
           </div>
         </form>
@@ -104,7 +104,7 @@
         <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
           <div class="card-body">
             <h5 class="card-title">Special Eventsourcing Feature:</h5>
-            <p class="card-text">Restore the last 5 discarded elements.</p>
+            <p class="card-text">Restore the last discarded element.</p>
             <a href="#" class="btn btn-primary" onclick="restoreLastDiscardedElements();">Try it out!</a>
           </div>
         </div>
@@ -124,7 +124,7 @@
               <div class="card-body">
                 <label for="rangeInput">Go back in time</label>
                 <input id="amount" type="text" value="0" name="amount" for="rangeInput" oninput="rangeInput.value=amount.value" class="no-border" style="width: 20px;" />
-                minutes
+                seconds
                 <input type="range" class="custom-range" min="0" max="100" step="1" value="0" name="rangeInput" id="rangeInput" oninput="amount.value=rangeInput.value">
                 <a onclick="goBackInTime(document.getElementById('rangeInput').value);" class="btn btn-primary text-white">Try it out!</a>
               </div>
@@ -143,28 +143,6 @@
 
 @section Scripts {
   <script type="text/javascript">
-
-//    function createTodoItem(e) {
-//      e.preventDefault();
-//      var data = {};
-//      data.title = $('#create-todo-item-text').val();
-//
-//      $.ajax({
-//        url: '@Url.RouteUrl(new { action = "Create", controller = "Todo" })',
-//        data: JSON.stringify(data),
-//        type: 'POST',
-//        dataType: 'json',
-//        contentType: "application/json",
-//        error: function(xhr, ajaxOptions, thrownError) {
-//          if (xhr.status != "200") {
-//            alert("Das hat nicht geklappt: " + xhr.status);
-//          }
-//        }
-//      });
-////        .always(function (id) {
-////          setTimeout(window.location.reload, 2000);
-////        });
-//    }
 
     function discardTodoItem(todoId) {
       var data = {};
@@ -286,6 +264,7 @@
       $('#amount').val(param);
 
 
+
       $("#createTodoItemForm").submit(function(e) {
         e.preventDefault();
         var data = {};
@@ -306,6 +285,10 @@
         .always(function(id) {
           window.location.reload();
         });
+      });
+
+      $("#createTodoButton").click(function(e) {
+        $("#createTodoItemForm").submit();
       });
     });
 

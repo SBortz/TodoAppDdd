@@ -69,7 +69,7 @@ namespace TodoAppDdd.Persistence
 				eventStream.AddRange(restoredEvents.Where(x => x.Id == todoItemCreated.Id));
 				if (goBackMinutes != null)
 				{
-					eventStream = eventStream.Where(x => x.CreatedOn.IsOlderThan(TimeSpan.FromMinutes(goBackMinutes.Value))).ToList();
+					eventStream = eventStream.Where(x => x.CreatedOn.IsOlderThan(TimeSpan.FromSeconds(goBackMinutes.Value))).ToList();
 				}
 				var orderedEventStream = eventStream.OrderBy(x => x.CreatedOn);
 				
@@ -90,7 +90,7 @@ namespace TodoAppDdd.Persistence
 			return todoItemList;
 		}
 
-		public IEnumerable<TodoItem> GetLast5DiscardedTodos()
+		public IEnumerable<TodoItem> GetLastDiscardedTodos()
 		{
 			var discardedEvents = this._eventStore.GetAll<TodoItemDiscarded>();
 			var lastEvents = discardedEvents
@@ -107,7 +107,7 @@ namespace TodoAppDdd.Persistence
 					todos.Add(todo);
 				}
 				
-				if (todos.Count >= 5)
+				if (todos.Count >= 1)
 				{
 					return todos;
 				}

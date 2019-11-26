@@ -2,6 +2,6 @@
 {
 	public class GetTodoItemsQuery
 	{
-		public int? GoBackMinutes { get; set; }
+		public int? GoBackSeconds { get; set; }
 	}
 }

@@ -8,6 +8,6 @@ namespace TodoAppDdd.Persistence
 		TodoItem GetTodo(string id);
 		IEnumerable<TodoItem> GetAllTodos(int? goBackMinutes = null);
 		void SaveState(TodoItem todoItem);
-		IEnumerable<TodoItem> GetLast5DiscardedTodos();
+		IEnumerable<TodoItem> GetLastDiscardedTodos();
 	}
 }
