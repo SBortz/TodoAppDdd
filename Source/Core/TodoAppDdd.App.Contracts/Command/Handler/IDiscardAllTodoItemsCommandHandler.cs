@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TodoAppDdd.App.Contracts.Command.Handler
 {
 	public interface IDiscardAllTodoItemsCommandHandler
 	{
-		void Handle(DiscardAllTodoItemsCommand itemCommand);
+		Task Handle(DiscardAllTodoItemsCommand itemCommand);
 	}
 }

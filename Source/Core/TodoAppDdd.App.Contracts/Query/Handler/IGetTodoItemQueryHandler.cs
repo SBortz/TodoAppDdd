@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TodoAppDdd.App.Contracts.Query.Handler
 {
 	public interface IGetTodoItemQueryHandler
 	{
-		TodoItemDto Handle(GetTodoItemQuery query);
+		Task<TodoItemDto> Handle(GetTodoItemQuery query);
 	}
 }

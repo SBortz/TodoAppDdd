@@ -1,4 +1,5 @@
-﻿using TodoAppDdd.App.Contracts.Command;
+﻿using System.Threading.Tasks;
+using TodoAppDdd.App.Contracts.Command;
 using TodoAppDdd.App.Contracts.Command.Handler;
 using TodoAppDdd.Persistence;
 
@@ -15,13 +16,13 @@ namespace TodoAppDdd.App.Command
 			this._readModelRepository = readModelRepository;
 		}
 
-		public void Handle(ResetTodoItemCommand cmd)
+		public async Task Handle(ResetTodoItemCommand cmd)
 		{
-			var todoItem = this._todoRepository.GetTodo(cmd.Id);
+			var todoItem = await this._todoRepository.GetTodo(cmd.Id);
 
 			todoItem.Reset();
 
-			this._todoRepository.SaveState(todoItem);
+			await this._todoRepository.SaveState(todoItem);
 			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TodoAppDdd.Domain.DDDBase;
 
@@ -10,7 +11,7 @@ namespace TodoAppDdd.Persistence.EventStore
 	{
 		private readonly List<IDomainEvent> _events = new List<IDomainEvent>();
 
-		public void AppendEvents(IEnumerable<IDomainEvent> domainEvents)
+		public async Task AppendEvents(IEnumerable<IDomainEvent> domainEvents)
 		{
 			foreach (var domainEvent in domainEvents)
 			{
@@ -18,7 +19,7 @@ namespace TodoAppDdd.Persistence.EventStore
 			}
 		}
 
-		public IEnumerable<TEventType> Get<TEventType>(string id) 
+		public async Task<IEnumerable<TEventType>> Get<TEventType>(string id) 
 			where TEventType : class, IDomainEvent
 		{
 			var selectedEvents = _events
@@ -31,7 +32,7 @@ namespace TodoAppDdd.Persistence.EventStore
 			return domainEvents;
 		}
 
-		public IEnumerable<TEventType> GetAll<TEventType>() 
+        public async Task<IEnumerable<TEventType>> GetAll<TEventType>() 
 			where TEventType : class, IDomainEvent
 		{
 			var domainEvents = this._events

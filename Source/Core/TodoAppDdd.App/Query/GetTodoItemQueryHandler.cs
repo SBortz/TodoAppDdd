@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Query;
 using TodoAppDdd.App.Contracts.Query.Handler;
@@ -19,9 +20,9 @@ namespace TodoAppDdd.App.Query
 			this._mapper = mapper;
 		}
 
-		public TodoItemDto Handle(GetTodoItemQuery query)
+		public async Task<TodoItemDto> Handle(GetTodoItemQuery query)
 		{
-			var todoItem = this._todoRepository.GetTodo(query.Id);
+			var todoItem = await this._todoRepository.GetTodo(query.Id);
 
 			if (todoItem == null || todoItem.IsDiscarded)
 			{

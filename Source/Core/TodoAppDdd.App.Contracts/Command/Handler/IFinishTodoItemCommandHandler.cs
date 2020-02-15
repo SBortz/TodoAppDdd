@@ -1,7 +1,9 @@
-﻿namespace TodoAppDdd.App.Contracts.Command.Handler
+﻿using System.Threading.Tasks;
+
+namespace TodoAppDdd.App.Contracts.Command.Handler
 {
 	public interface IFinishTodoItemCommandHandler
 	{
-		void Handle(FinishTodoItemCommand cmd);
+		Task Handle(FinishTodoItemCommand cmd);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Command;
 using TodoAppDdd.App.Contracts.Query;
@@ -23,13 +24,19 @@ namespace TodoAppDdd.App.Command
 			this._todoItemReadModelRepository = todoItemReadModelRepository;
 		}
 
-		public TodoItemDto Handle(CreateTodoItemCommand itemCommand)
+		public async Task<TodoItemDto> Handle(CreateTodoItemCommand itemCommand)
 		{
 			var todoItem = new TodoItem(itemCommand.Title, itemCommand.Order);
 
-			this._todoRepository.SaveState(todoItem);
+			var happenedDomainEvents = todoItem.DomainEvents;
 
-			this._todoItemReadModelRepository.InsertOrUpdateFromTodoItem(todoItem);
+
+			await this._todoRepository.SaveState(todoItem);
+			// this.eventPublisher.Publish(happenedDomainEvents);
+
+			
+//
+//			this._todoItemReadModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 			return this._mapper.Map(todoItem);
 		}
 	}

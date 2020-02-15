@@ -1,7 +1,9 @@
-﻿namespace TodoAppDdd.App.Contracts.Command.Handler
+﻿using System.Threading.Tasks;
+
+namespace TodoAppDdd.App.Contracts.Command.Handler
 {
 	public interface IRestoreDiscardedTodoItemsCommandHandler
 	{
-		void Handle(RestoreDiscardedTodoItemsCommand command);
+		Task Handle(RestoreDiscardedTodoItemsCommand command);
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Contracts.Command;
 using TodoAppDdd.App.Contracts.Command.Handler;
 using TodoAppDdd.Domain.Aggregate;
@@ -21,16 +22,16 @@ namespace TodoAppDdd.App.Command
 			this._readModelRepository = readModelRepository;
 		}
 
-		public void Handle(DiscardAllTodoItemsCommand command)
+		public async Task Handle(DiscardAllTodoItemsCommand command)
 		{
-			var allTodos = this._todoRepository.GetAllTodos();
+			var allTodos = await this._todoRepository.GetAllTodos();
 			
 			foreach (var todoItem in allTodos)
 			{
 				try
 				{
 					todoItem.Discard();
-					this._todoRepository.SaveState(todoItem);
+					await this._todoRepository.SaveState(todoItem);
 					this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 				}
 				catch(TodoItemAlreadyDiscardedException ex)

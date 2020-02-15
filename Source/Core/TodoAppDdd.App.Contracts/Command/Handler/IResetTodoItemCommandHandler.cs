@@ -1,7 +1,9 @@
-﻿namespace TodoAppDdd.App.Contracts.Command.Handler
+﻿using System.Threading.Tasks;
+
+namespace TodoAppDdd.App.Contracts.Command.Handler
 {
 	public interface IResetTodoItemCommandHandler
 	{
-		void Handle(ResetTodoItemCommand cmd);
+		Task Handle(ResetTodoItemCommand cmd);
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Command;
 using TodoAppDdd.App.Contracts.Command.Handler;
@@ -25,9 +26,9 @@ namespace TodoAppDdd.App.Command
 			this._readModelRepository = readModelRepository;
 		}
 
-		public TodoItemDto Handle(UpdateAllFieldsOfTodoItemCommand command)
+		public async Task<TodoItemDto> Handle(UpdateAllFieldsOfTodoItemCommand command)
 		{
-			var todoItem = this._repository.GetTodo(command.Id);
+			var todoItem = await this._repository.GetTodo(command.Id);
 
 			if (todoItem == null)
 			{
@@ -68,7 +69,7 @@ namespace TodoAppDdd.App.Command
 				}
 			}
 
-			this._repository.SaveState(todoItem);
+			await this._repository.SaveState(todoItem);
 			this._readModelRepository.InsertOrUpdateFromTodoItem(todoItem);
 
 			return this._mapper.Map(todoItem);

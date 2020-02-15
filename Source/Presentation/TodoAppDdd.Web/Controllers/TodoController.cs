@@ -1,4 +1,5 @@
-﻿using TodoAppDdd.App.Contracts.Command;
+﻿using System.Threading.Tasks;
+using TodoAppDdd.App.Contracts.Command;
 using Microsoft.AspNetCore.Mvc;
 using TodoAppDdd.App.Contracts.Command.Handler;
 
@@ -24,44 +25,44 @@ namespace TodoAppDdd.Web.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Create([FromBody] CreateTodoItemCommand cmd)
+		public async Task<IActionResult> Create([FromBody] CreateTodoItemCommand cmd)
 		{
-			this._createTodoItemItemCommandHandler.Handle(cmd);
+			await this._createTodoItemItemCommandHandler.Handle(cmd);
 
 			return this.Ok();
 		}
 
-		public IActionResult Discard([FromBody] DiscardTodoItemCommand cmd)
+		public async Task<IActionResult> Discard([FromBody] DiscardTodoItemCommand cmd)
 		{
-			this._discardTodoItemCommandHandler.Handle(cmd);
+			await this._discardTodoItemCommandHandler.Handle(cmd);
 
 			return this.Ok();
 		}
 
-		public IActionResult Finish([FromBody] FinishTodoItemCommand cmd)
+		public async Task<IActionResult> Finish([FromBody] FinishTodoItemCommand cmd)
 		{
-			this._finishTodoItemCommandHandler.Handle(cmd);
+            await this._finishTodoItemCommandHandler.Handle(cmd);
 
 			return this.Ok();
 		}
 
-		public IActionResult Reset([FromBody] ResetTodoItemCommand cmd)
+		public async Task<IActionResult> Reset([FromBody] ResetTodoItemCommand cmd)
 		{
-			this._resetTodoItemCommandHandler.Handle(cmd);
+            await this._resetTodoItemCommandHandler.Handle(cmd);
 
 			return this.Ok();
 		}
 
-		public IActionResult Restore([FromBody] RestoreDiscardedTodoItemsCommand cmd)
+		public async Task<IActionResult> Restore([FromBody] RestoreDiscardedTodoItemsCommand cmd)
 		{
-			this._restoreDiscardedTodoItemsCommandHandler.Handle(cmd);
+            await this._restoreDiscardedTodoItemsCommandHandler.Handle(cmd);
 
 			return this.Ok();
 		}
 
-		public IActionResult DiscardAll([FromBody] DiscardAllTodoItemsCommand command)
+		public async Task<IActionResult> DiscardAll([FromBody] DiscardAllTodoItemsCommand command)
 		{
-			this._discardAllTodoItemsCommandHandler.Handle(command);
+            await this._discardAllTodoItemsCommandHandler.Handle(command);
 
 			return this.Ok();
 		}

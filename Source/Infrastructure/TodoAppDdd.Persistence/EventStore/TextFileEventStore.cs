@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TodoAppDdd.Domain.DDDBase;
 
@@ -11,7 +12,7 @@ namespace TodoAppDdd.Persistence.EventStore
 	{
 		public static string Filename = "events.txt";
 
-		public void AppendEvents(IEnumerable<IDomainEvent> domainEvents)
+		public async Task AppendEvents(IEnumerable<IDomainEvent> domainEvents)
 		{
 			List<string> lines = new List<string>();
 
@@ -25,16 +26,14 @@ namespace TodoAppDdd.Persistence.EventStore
 			File.AppendAllLines(path, lines);
 		}
 
-		public IEnumerable<TEventType> Get<TEventType>(string id)
+		public async Task<IEnumerable<TEventType>> Get<TEventType>(string id)
 			where TEventType : class, IDomainEvent
 		{
-			var selectedEvents = this.GetAll<TEventType>()
-				.Where(x => x.Id == id);
-
-			return selectedEvents;
+			var selectedEvents = await this.GetAll<TEventType>();
+                return selectedEvents.Where(x => x.Id == id);
 		}
 
-		public IEnumerable<TEventType> GetAll<TEventType>()
+		public async Task<IEnumerable<TEventType>> GetAll<TEventType>()
 			where TEventType : class, IDomainEvent
 		{
 			var path = GetEventFilePath();

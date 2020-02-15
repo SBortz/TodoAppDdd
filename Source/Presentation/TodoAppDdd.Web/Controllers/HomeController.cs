@@ -19,10 +19,9 @@ namespace TodoAppDdd.Web.Controllers
 			this._getTodoItemsQueryHandler = getTodoItemsQueryHandler;
 		}
 
-		public IActionResult Index([FromQuery] int? goBack)
+		public async Task<IActionResult> Index([FromQuery] int? goBack)
 		{
-
-			IEnumerable<TodoItemDto> todoItems = this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery() { GoBackSeconds = goBack});
+            IEnumerable<TodoItemDto> todoItems = await this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery() { GoBackSeconds = goBack});
 			return View(todoItems);
 		}
 

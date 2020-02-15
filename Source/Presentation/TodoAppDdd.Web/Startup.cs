@@ -40,12 +40,12 @@ namespace TodoAppDdd.Web
 			if (this.env.IsDevelopment())
 			{
 				// Demonstrate events in text file
-//				services.AddTextEventStore();
-//				services.AddQueryHandler();
+				services.AddEventStore();
+				services.AddQueryHandler();
 
 				// Reset all data sources in order to be in sync after every start
-				services.AddInMemoryEventStore();
-				services.AddReadModelQueryHandlerWithInMemoryDbContext();
+//				services.AddInMemoryEventStore();
+//				services.AddReadModelQueryHandlerWithInMemoryDbContext();
 			}
 			else
 			{

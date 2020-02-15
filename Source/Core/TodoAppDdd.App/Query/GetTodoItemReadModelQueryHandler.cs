@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Query;
 using TodoAppDdd.App.Contracts.Query.Handler;
@@ -22,13 +23,13 @@ namespace TodoAppDdd.App.Query
 			this._readModelRepository = readModelRepository;
 		}
 
-		public TodoItemDto Handle(GetTodoItemQuery query)
+		public async Task<TodoItemDto> Handle(GetTodoItemQuery query)
 		{
 			var todoItem = this._readModelRepository.Find(query.Id);
 
 			if (todoItem == null)
 			{
-				return this.Fallback(query);
+				return await this.Fallback(query);
 			}
 
 			if (todoItem.IsDiscarded)
@@ -40,9 +41,9 @@ namespace TodoAppDdd.App.Query
 			return todoItemDto;
 		}
 
-		private TodoItemDto Fallback(GetTodoItemQuery query)
+		private async Task<TodoItemDto> Fallback(GetTodoItemQuery query)
 		{
-			var todoItem = this._todoRepository.GetTodo(query.Id);
+			var todoItem = await this._todoRepository.GetTodo(query.Id);
 			if (todoItem == null || todoItem.IsDiscarded)
 			{
 				return null;

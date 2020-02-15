@@ -9,6 +9,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="EventStore.Client" Version="5.0.5" />
 		<PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
 
 		<Reference Include="Newtonsoft.Json">

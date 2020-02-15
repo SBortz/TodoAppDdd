@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using TodoAppDdd.App.Common;
 using TodoAppDdd.App.Contracts.Query;
 using TodoAppDdd.App.Contracts.Query.Handler;
@@ -19,9 +20,9 @@ namespace TodoAppDdd.App.Query
 			this._mapper = mapper;
 		}
 
-		public IEnumerable<TodoItemDto> Handle(GetTodoItemsQuery query)
+		public async Task<IEnumerable<TodoItemDto>> Handle(GetTodoItemsQuery query)
 		{
-			var todoItems = this._todoRepository.GetAllTodos(query.GoBackSeconds);
+			var todoItems = await this._todoRepository.GetAllTodos(query.GoBackSeconds);
 
 			var todoItemsDtoList = new List<TodoItemDto>();
 			foreach (var todoItem in todoItems)

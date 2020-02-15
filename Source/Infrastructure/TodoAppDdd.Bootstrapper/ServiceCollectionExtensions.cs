@@ -62,5 +62,10 @@ namespace TodoAppDdd.Bootstrapper
 		{
 			serviceCollection.AddSingleton<IEventStore, InMemoryEventStore>();
 		}
-	}
+
+        public static void AddEventStore(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddSingleton<IEventStore, EventStoreClient>();
+        }
+    }
 }

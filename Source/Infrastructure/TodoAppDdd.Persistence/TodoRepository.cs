@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TodoAppDdd.Domain.Aggregate;
 using TodoAppDdd.Domain.DDDBase;
 using TodoAppDdd.Domain.Event;
@@ -17,15 +18,15 @@ namespace TodoAppDdd.Persistence
 			this._eventStore = eventStore;
 		}
 
-		public TodoItem GetTodo(string id)
+		public async Task<TodoItem> GetTodo(string id)
 		{
-			var allNecessaryEvents = this._eventStore.Get<TodoItemCreated>(id);
-			var discardedEvents = this._eventStore.Get<TodoItemDiscarded>(id);
-			var finishedEvents = this._eventStore.Get<TodoItemMarkedAsFinished>(id);
-			var resettedEvents = this._eventStore.Get<TodoItemResetted>(id);
-			var titleUpdatedEvents = this._eventStore.Get<TodoItemTitleUpdated>(id);
-			var orderUpdatedEvents = this._eventStore.Get<TodoItemOrderUpdated>(id);
-			var restoredEvents = this._eventStore.Get<TodoItemRestored>(id);
+			var allNecessaryEvents = await this._eventStore.Get<TodoItemCreated>(id);
+			var discardedEvents = await this._eventStore.Get<TodoItemDiscarded>(id);
+			var finishedEvents = await this._eventStore.Get<TodoItemMarkedAsFinished>(id);
+			var resettedEvents = await this._eventStore.Get<TodoItemResetted>(id);
+			var titleUpdatedEvents = await this._eventStore.Get<TodoItemTitleUpdated>(id);
+			var orderUpdatedEvents = await this._eventStore.Get<TodoItemOrderUpdated>(id);
+			var restoredEvents = await this._eventStore.Get<TodoItemRestored>(id);
 
 			var eventStream = new List<IDomainEvent>();
 			eventStream.AddRange(allNecessaryEvents);
@@ -46,16 +47,16 @@ namespace TodoAppDdd.Persistence
 			return todoItem;
 		}
 
-		public IEnumerable<TodoItem> GetAllTodos(int? goBackMinutes = null)
+		public async Task<IEnumerable<TodoItem>> GetAllTodos(int? goBackMinutes = null)
 		{
 			var todoItemList = new List<TodoItem>();
-			var createdTodoItemEvents = this._eventStore.GetAll<TodoItemCreated>();
-			var discardedEvents = this._eventStore.GetAll<TodoItemDiscarded>();
-			var finishedEvents = this._eventStore.GetAll<TodoItemMarkedAsFinished>();
-			var resettedEvents = this._eventStore.GetAll<TodoItemResetted>();
-			var titleUpdatedEvents = this._eventStore.GetAll<TodoItemTitleUpdated>();
-			var orderUpdatedEvents = this._eventStore.GetAll<TodoItemOrderUpdated>();
-			var restoredEvents = this._eventStore.GetAll<TodoItemRestored>();
+			var createdTodoItemEvents = await this._eventStore.GetAll<TodoItemCreated>();
+			var discardedEvents = await this._eventStore.GetAll<TodoItemDiscarded>();
+			var finishedEvents = await this._eventStore.GetAll<TodoItemMarkedAsFinished>();
+			var resettedEvents = await this._eventStore.GetAll<TodoItemResetted>();
+			var titleUpdatedEvents = await this._eventStore.GetAll<TodoItemTitleUpdated>();
+			var orderUpdatedEvents = await this._eventStore.GetAll<TodoItemOrderUpdated>();
+			var restoredEvents = await this._eventStore.GetAll<TodoItemRestored>();
 			
 			foreach (var todoItemCreated in createdTodoItemEvents)
 			{
@@ -90,9 +91,9 @@ namespace TodoAppDdd.Persistence
 			return todoItemList;
 		}
 
-		public IEnumerable<TodoItem> GetLastDiscardedTodos()
+		public async Task<IEnumerable<TodoItem>> GetLastDiscardedTodos()
 		{
-			var discardedEvents = this._eventStore.GetAll<TodoItemDiscarded>();
+			var discardedEvents = await this._eventStore.GetAll<TodoItemDiscarded>();
 			var lastEvents = discardedEvents
 				.OrderByDescending(x => x.CreatedOn);
 				
@@ -100,7 +101,7 @@ namespace TodoAppDdd.Persistence
 			var todos = new List<TodoItem>();
 			foreach (var todoItemDiscarded in lastEvents)
 			{
-				var todo = this.GetTodo(todoItemDiscarded.Id);
+				var todo = await this.GetTodo(todoItemDiscarded.Id);
 
 				if (todo.IsDiscarded)
 				{
@@ -116,9 +117,9 @@ namespace TodoAppDdd.Persistence
 			return todos;
 		}
 
-		public void SaveState(TodoItem todoItem)
+		public async Task SaveState(TodoItem todoItem)
 		{
-			this._eventStore.AppendEvents(todoItem.DomainEvents);
+			await this._eventStore.AppendEvents(todoItem.DomainEvents);
 		}
 	}
 }

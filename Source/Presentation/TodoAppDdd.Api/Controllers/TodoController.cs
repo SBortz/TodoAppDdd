@@ -38,25 +38,25 @@ namespace TodoAppDdd.Api.Controllers
 
 		// GET api/values
 		[HttpGet]
-		public ActionResult<IEnumerable<TodoItemDto>> Get()
+		public async Task<ActionResult<IEnumerable<TodoItemDto>>> Get()
 		{
-			var items = this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery());
+			var items = await this._getTodoItemsQueryHandler.Handle(new GetTodoItemsQuery());
 
 			return this.Ok(items);
 		}
 
 		// GET api/values/5
 		[HttpGet("{id}")]
-		public ActionResult<TodoItemDto> Get(string id)
+		public async Task<ActionResult<TodoItemDto>> Get(string id)
 		{
-			var item = this._getTodoItemQueryHandler.Handle(new GetTodoItemQuery() { Id = id });
+			var item = await this._getTodoItemQueryHandler.Handle(new GetTodoItemQuery() { Id = id });
 
 			return this.Ok(item);
 		}
 
 		// POST api/values
 		[HttpPost]
-		public ActionResult Post([FromBody] TodoItemDto value)
+		public async Task<ActionResult> Post([FromBody] TodoItemDto value)
 		{
 			var item = this._createTodoItemItemCommandHandler.Handle(
 				new CreateTodoItemCommand()
@@ -70,9 +70,9 @@ namespace TodoAppDdd.Api.Controllers
 
 		// PUT api/values/5
 		[HttpPatch("{id}")]
-		public ActionResult Patch(string id, [FromBody] TodoItemDto value)
+		public async Task<ActionResult> Patch(string id, [FromBody] TodoItemDto value)
 		{
-			var item = this._updateAllFieldsOfTodoItemCommandHandler.Handle(
+			var item = await this._updateAllFieldsOfTodoItemCommandHandler.Handle(
 				new UpdateAllFieldsOfTodoItemCommand()
 				{
 					Id = id,
@@ -85,18 +85,18 @@ namespace TodoAppDdd.Api.Controllers
 		}
 
 		[HttpDelete()]
-		public ActionResult Delete()
+		public async Task<ActionResult> Delete()
 		{
-			this._discardAllTodoItemsCommandHandler.Handle(new DiscardAllTodoItemsCommand());
+            await this._discardAllTodoItemsCommandHandler.Handle(new DiscardAllTodoItemsCommand());
 
 			return this.Ok();
 		}
 
 		// DELETE api/values/5
 		[HttpDelete("{id}")]
-		public ActionResult Delete(string id)
+		public async Task<ActionResult> Delete(string id)
 		{
-			this._discardTodoItemCommandHandler.Handle(new DiscardTodoItemCommand() { Id = id });
+            await this._discardTodoItemCommandHandler.Handle(new DiscardTodoItemCommand() { Id = id });
 
 			return this.Ok();
 		}
