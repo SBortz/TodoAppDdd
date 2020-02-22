@@ -67,7 +67,7 @@ namespace TodoAppDdd.Bootstrapper
         public static void AddEventStore(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IEventStore, EventStoreClient>();
-            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "TodoAppDDD");
+            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "TodoAppDdd");
             connection.ConnectAsync();
             serviceCollection.AddSingleton<IEventStoreConnection>(connection);
         }
