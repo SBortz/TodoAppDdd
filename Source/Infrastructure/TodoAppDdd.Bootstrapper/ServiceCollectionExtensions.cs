@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using EventStore.ClientAPI;
 using Microsoft.EntityFrameworkCore;
 using TodoAppDdd.App.Command;
 using TodoAppDdd.App.Contracts.Command;
@@ -66,6 +67,9 @@ namespace TodoAppDdd.Bootstrapper
         public static void AddEventStore(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IEventStore, EventStoreClient>();
+            var connection = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "TodoAppDDD");
+            connection.ConnectAsync();
+            serviceCollection.AddSingleton<IEventStoreConnection>(connection);
         }
     }
 }

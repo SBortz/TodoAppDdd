@@ -9,41 +9,24 @@ using Newtonsoft.Json;
 using TodoAppDdd.Domain.Aggregate;
 using TodoAppDdd.Domain.DDDBase;
 using TodoAppDdd.Domain.Event;
+using TodoAppDdd.Domain.ReadModel;
 using TodoAppDdd.Persistence.EventStore;
 
 namespace TodoAppDdd.Persistence
 {
-	public class TodoRepository : ITodoRepository
+    public class TodoRepository : ITodoRepository
 	{
 		private readonly IEventStore _eventStore;
-        private readonly IEventStoreConnection betterEventStore;
-
         private IEventStoreConnection _conn;
-        private UserCredentials userCredentials;
 
-        public TodoRepository(IEventStore eventStore)
+        public TodoRepository(IEventStore eventStore, IEventStoreConnection eventStoreConnection)
         {
+            this._conn = eventStoreConnection;
             this._eventStore = eventStore;
-        }
-
-        private async Task EnsureEventStoreConnection()
-        {
-            if (this._conn != null)
-            {
-                return;
-            }
-
-            this.userCredentials = new UserCredentials("admin", "changeit");
-            this._conn = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"),
-                "InputFromFileConsoleApp");
-
-            await this._conn.ConnectAsync();
         }
 
         public async Task<TodoItem> GetTodoAsync(string todoItemId)
         {
-            await this.EnsureEventStoreConnection();
-
             var streamEvents = new List<ResolvedEvent>();
 
             StreamEventsSlice currentSlice;
@@ -95,84 +78,25 @@ namespace TodoAppDdd.Persistence
             return todoItem;
         }
 
-		public async Task<IEnumerable<TodoItem>> GetAllTodos(int? goBackMinutes = null)
+        public async Task<IEnumerable<TodoItem>> GetAllTodos(int? goBackMinutes = null)
         {
-            await this.EnsureEventStoreConnection();
-
-            var streamEvents = new List<ResolvedEvent>();
-
-            AllEventsSlice currentSlice;
-            var nextSliceStart = Position.Start;
-            do
-            {
-                currentSlice = await this._conn.ReadAllEventsForwardAsync(nextSliceStart, 200, false, this.userCredentials);
-
-                nextSliceStart = currentSlice.NextPosition;
-                Debug.WriteLine($"Reading all events FromPosition: {currentSlice.FromPosition}, NextPosition: {currentSlice.NextPosition}, EventCount: {currentSlice.Events.Length}");
-
-                streamEvents.AddRange(currentSlice.Events.Where(x => x.Event.EventType == nameof(TodoItemCreated)));
-            } while (!currentSlice.IsEndOfStream);
-
-            var todoItemCreatedEvents = new List<TodoItemCreated>();
-            Debug.WriteLine($"StreamEvents.Count(): {streamEvents.Count}");
-            foreach (var resolvedEvent in streamEvents)
-            {
-                var json = this.ByteArrayToString(resolvedEvent.Event.Data);
-                var todoItemCreatedEvent = JsonConvert.DeserializeObject<TodoItemCreated>(json);
-
-                todoItemCreatedEvents.Add(todoItemCreatedEvent);
-            }
-
+            await this._conn.ReadEventAsync("all-todoitems", StreamPosition.End, false);
+            
             var todoList = new List<TodoItem>();
-            foreach (var todoItemCreatedEvent in todoItemCreatedEvents)
+            var lastEvent = await this._conn.ReadEventAsync("all-todoitems", StreamPosition.End, false);
+            if (lastEvent != null && lastEvent.Event.HasValue)
             {
-                var todoItem = await this.GetTodoAsync(todoItemCreatedEvent.Id);
-                todoList.Add(todoItem);
+                var json = this.ByteArrayToString(lastEvent.Event.Value.Event.Data);
+                var allTodoItems = JsonConvert.DeserializeObject<AllTodoItems>(json);
+
+                foreach (var todoItemId in allTodoItems.TodoItems)
+                {
+                    var todoItem = await this.GetTodoAsync(todoItemId);
+                    todoList.Add(todoItem);
+                }
             }
 
             return todoList;
-
-
-            //          var todoItemList = new List<TodoItem>();
-            // var createdTodoItemEvents = await this._eventStore.GetAll<TodoItemCreated>();
-            // var discardedEvents = await this._eventStore.GetAll<TodoItemDiscarded>();
-            // var finishedEvents = await this._eventStore.GetAll<TodoItemMarkedAsFinished>();
-            // var resettedEvents = await this._eventStore.GetAll<TodoItemResetted>();
-            // var titleUpdatedEvents = await this._eventStore.GetAll<TodoItemTitleUpdated>();
-            // var orderUpdatedEvents = await this._eventStore.GetAll<TodoItemOrderUpdated>();
-            // var restoredEvents = await this._eventStore.GetAll<TodoItemRestored>();
-            //
-            // foreach (var todoItemCreated in createdTodoItemEvents)
-            // {
-            // 	var eventStream = new List<IDomainEvent>();
-            // 	eventStream.Add(todoItemCreated);
-            // 	eventStream.AddRange(discardedEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	eventStream.AddRange(finishedEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	eventStream.AddRange(resettedEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	eventStream.AddRange(titleUpdatedEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	eventStream.AddRange(orderUpdatedEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	eventStream.AddRange(restoredEvents.Where(x => x.Id == todoItemCreated.Id));
-            // 	if (goBackMinutes != null)
-            // 	{
-            // 		eventStream = eventStream.Where(x => x.CreatedOn.IsOlderThan(TimeSpan.FromSeconds(goBackMinutes.Value))).ToList();
-            // 	}
-            // 	var orderedEventStream = eventStream.OrderBy(x => x.CreatedOn);
-            // 	
-            //
-            // 	var todoItem = new TodoItem(orderedEventStream);
-            //
-            // 	if (todoItem.IsDiscarded)
-            // 	{
-            // 		continue;
-            // 	}
-            // 	if (todoItem.Id == null)
-            // 	{
-            // 		continue;
-            // 	}
-            // 	todoItemList.Add(todoItem);
-            // }
-            //
-            // return todoItemList;
         }
 
 		public async Task<IEnumerable<TodoItem>> GetLastDiscardedTodos()
@@ -181,7 +105,6 @@ namespace TodoAppDdd.Persistence
 			var lastEvents = discardedEvents
 				.OrderByDescending(x => x.CreatedOn);
 				
-
 			var todos = new List<TodoItem>();
 			foreach (var todoItemDiscarded in lastEvents)
 			{
