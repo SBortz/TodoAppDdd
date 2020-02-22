@@ -7,6 +7,7 @@ using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using Newtonsoft.Json;
 using TodoAppDdd.Domain.DDDBase;
+using TodoAppDdd.Domain.Event;
 
 namespace TodoAppDdd.Persistence.EventStore
 {
@@ -30,7 +31,7 @@ namespace TodoAppDdd.Persistence.EventStore
                 var serializedDomainEvent = JsonConvert.SerializeObject(domainEvent);
                 var serializedDomainEventData = this.StringToByteArray(serializedDomainEvent);
                 var eventData = new EventData(Guid.NewGuid(), domainEvent.EventType, true, serializedDomainEventData, null);
-                await this._conn.AppendToStreamAsync(domainEvent.EventType, ExpectedVersion.Any, eventData);
+                await this._conn.AppendToStreamAsync(domainEvent.Id, ExpectedVersion.Any, eventData);
             }
         }
 
@@ -43,13 +44,18 @@ namespace TodoAppDdd.Persistence.EventStore
         public async Task<IEnumerable<TEventType>> GetAll<TEventType>() where TEventType : class, IDomainEvent
         {
             var allDomainEvents = new List<TEventType>();
-            var eventTypeName = typeof(TEventType).Name;
-            StreamEventsSlice readEvents = await this._conn.ReadStreamEventsForwardAsync(eventTypeName, 0, 500, false, this.userCredentials);
+            var readEvents = await this._conn.ReadAllEventsForwardAsync(Position.Start, 500, false, this.userCredentials);
             foreach (var readEventsEvent in readEvents.Events)
             {
                 var domainEventJson = this.ByteArrayToString(readEventsEvent.Event.Data);
-                var domainEvent = JsonConvert.DeserializeObject<TEventType>(domainEventJson);
-                allDomainEvents.Add(domainEvent);
+
+                var eventType = typeof(TEventType).Name;
+                if (readEventsEvent.Event.EventType == eventType)
+                {
+                    var domainEvent = JsonConvert.DeserializeObject<TEventType>(domainEventJson);
+                    allDomainEvents.Add(domainEvent);
+                }
+                    
             }
 
             return allDomainEvents;

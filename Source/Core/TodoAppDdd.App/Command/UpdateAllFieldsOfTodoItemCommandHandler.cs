@@ -28,7 +28,7 @@ namespace TodoAppDdd.App.Command
 
 		public async Task<TodoItemDto> Handle(UpdateAllFieldsOfTodoItemCommand command)
 		{
-			var todoItem = await this._repository.GetTodo(command.Id);
+			var todoItem = await this._repository.GetTodoAsync(command.Id);
 
 			if (todoItem == null)
 			{

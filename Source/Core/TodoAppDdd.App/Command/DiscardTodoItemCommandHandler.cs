@@ -21,7 +21,7 @@ namespace TodoAppDdd.App.Command
 
 		public async Task Handle(DiscardTodoItemCommand cmd)
 		{
-			var todoItem = await this._todoRepository.GetTodo(cmd.Id);
+			var todoItem = await this._todoRepository.GetTodoAsync(cmd.Id);
 
 			todoItem.Discard();
 

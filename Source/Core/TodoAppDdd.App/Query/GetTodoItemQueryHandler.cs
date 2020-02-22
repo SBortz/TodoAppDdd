@@ -22,7 +22,7 @@ namespace TodoAppDdd.App.Query
 
 		public async Task<TodoItemDto> Handle(GetTodoItemQuery query)
 		{
-			var todoItem = await this._todoRepository.GetTodo(query.Id);
+			var todoItem = await this._todoRepository.GetTodoAsync(query.Id);
 
 			if (todoItem == null || todoItem.IsDiscarded)
 			{

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace TodoAppDdd.Domain.DDDBase
 {
-	public abstract class DomainEvent : IDomainEvent
+	public class DomainEvent : IDomainEvent
 	{
 		[JsonProperty(Order = -4)]
 		public string Id { get; set; }
